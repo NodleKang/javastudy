@@ -9,11 +9,19 @@ public class RunManager {
 
     public static void main(String[] args) {
 
+        // 문자열에 '#'이나 ':'과 같은 여러 구분 기호가 모두 포함되어 있는 경우
+        // 문자열을 나누는 방법 샘플
+        String input = "abc:def#ghi:jkl";
+        String[] parts = input.split("[#:]");
+        for (String part : parts) {
+            System.out.println(part);
+        }
+
         // 파일 관련 유틸 사용
         // testFileUtil();
 
         // Json 관련 유틸 사용
-        testJsonUtil();
+        // testJsonUtil();
     }
 
     // 파일 관련 유틸 사용
