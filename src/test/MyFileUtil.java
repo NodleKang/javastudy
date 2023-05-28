@@ -110,33 +110,46 @@ public class MyFileUtil {
         }
     }
 
-    // 파일 내용을 모두 읽어서 단일 String 객체로 반환
-    public String getStringFromFile(String fileFullPath) {
+    // 파일 내용을 읽어서 String 객체로 반환
+    private String readFileContent(File file) throws IOException {
         // StringBuilder 객체를 사용해서 파일 내용 저장
-        StringBuilder content = new StringBuilder();
-        // 파일 객체 생성
-        File file = new File(fileFullPath);
+        StringBuilder contentBuilder = new StringBuilder();
         // 파일이 존재하고 파일인 경우에만 파일 내용 읽기
         if (file.exists() && file.isFile()) {
-            // try-with-resources 구문 사용
-            // try 블록이 끝나면 자동으로 close() 메소드가 호출됨
             // BufferedReader 객체를 사용해서 파일 내용 읽기
+            // try-with-resources 구문 사용 (Java 7 이상)
+            // try 블록이 끝나면 자동으로 close() 메소드가 호출됨
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
+                // 파일 내용을 모두 읽어서 StringBuilder 객체에 저장
                 while ((line = reader.readLine()) != null) {
-                    content.append(line);
+                    // StringBuilder 객체에 파일 내용 저장
+                    contentBuilder.append(line).append(System.lineSeparator());
                 }
-            } catch (IOException e) {
-                // 예외 발생 시 스택 트레이스 출력
-                e.printStackTrace();
             }
         }
         // StringBuilder 객체를 String 객체로 변환해서 반환
-        return content.toString();
+        return contentBuilder.toString();
+    }
+
+    // 파일 내용을 모두 읽어서 단일 String 객체로 반환
+    public String readFileContent(String fileFullPath) {
+        String content = "";
+        // 파일 객체 생성
+        File file = new File(fileFullPath);
+
+        try {
+            // 파일 내용을 모두 읽어서 String 객체로 반환
+            content = readFileContent(file);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        return content;
     }
 
     // 파일 내용을 모두 읽어서 String 배열로 반환
-    public String[] getStringArrayFromFile(String fileFullPath) {
+    public String[] readFileContentToArray(String fileFullPath) {
         // ArrayList 객체를 사용해서 파일 내용 저장
         List<String> lines = new ArrayList<>();
         // 파일 객체 생성
@@ -160,46 +173,39 @@ public class MyFileUtil {
         return lines.toArray(new String[0]);
     }
 
-    // 주어진 경로(path)에 해당하는 파일에 입력할 문자열(content)을 지정된 위치(position)에 따라 쓰기 (position: prepend, append)
-    public boolean writeStringToFile(String path, String content, String position) {
-        // 파일 객체 생성
-        File file = new File(path);
+    // 파일에 문자열 입력
+    // position: "prepend" - 파일의 맨 앞에 입력
+    //           "overwrite" - 파일의 내용을 모두 지우고 입력
+    //           "append" - 파일의 맨 뒤에 입력
+    public boolean writeToFile(String path, String content, String position) {
 
-        // BufferedWriter 객체를 사용해서 파일 쓰기
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, position.equals("prepend")))) {
-            // try-with-resources 구문 사용 (Java 7 이상)
-            // try 블록이 끝나면 자동으로 close() 메소드가 호출됨
-            // 문자열을 입력할 위치가 prepend인 경우에는 파일의 맨 앞에 문자열을 입력
-            if (position.equals("prepend")) {
-                // BufferedWrite 객체에 입력할 문자열 쓰기
-                writer.write(content);
-                // 줄바꿈 문자 쓰기
-                writer.newLine();
-                // 버퍼 비우기
-                writer.flush();
-                // BufferedWriter 객체 닫기
-                writer.close();
-                return true;
-                // 문자열을 입력할 위치가 append인 경우에는 파일의 맨 뒤에 문자열을 입력
-            } else if (position.equals("append")) {
-                // BufferedWriter 객체에 입력할 문자열 덧붙이기
-                writer.append(content);
-                // 줄바꿈 문자 쓰기
-                writer.newLine();
-                // 버퍼 비우기
-                writer.flush();
-                // BufferedWriter 객체 닫기
-                writer.close();
-                return true;
-            } else {
-                // 파일쓰기에 실패하면 false 반환
-                System.out.println("Invalid position. Please specify either 'prepend' or 'append'.");
-                return false;
+        // 파일의 맨 앞에 입력하는 경우 기존 내용을 읽어서 변수에 담기
+        String existingContent = "";
+        if (position.equals("prepend")) {
+            try {
+                existingContent = readFileContent(new File(path));
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
+        }
+
+        // try-with-resources 구문 사용 (Java 7 이상)
+        // try 블록이 끝나면 자동으로 close() 메소드가 호출됨
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, position.equals("append")))) {
+            if (position.equals("prepend")) {
+                writer.write(content);
+                writer.newLine();
+                writer.write(existingContent);
+            } else if (position.equals("overwrite")) {
+                writer.write(content);
+                writer.newLine();
+            } else {
+                writer.write(content);
+                writer.newLine();
+            }
+            return true;
         } catch (IOException e) {
-            // 예외 발생 시 스택 트레이스 출력
-            e.printStackTrace();
-            // 파일쓰기에 실패하면 false 반환
+            System.out.println("파일에 문자열을 입력하는 도중 오류가 발생했습니다: " + e.getMessage());
             return false;
         }
     }
