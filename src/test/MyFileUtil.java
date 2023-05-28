@@ -6,25 +6,25 @@ import java.util.*;
 public class MyFileUtil {
 
     // 주어진 경로(path)에 해당하는 파일이 존재하는지 여부 반환
-    public boolean checkFileExists(String fileFullPath) {
+    public static boolean checkFileExists(String fileFullPath) {
         File file = new File(fileFullPath);
         return file.exists() && file.isFile();
     }
 
     // 주어진 경로(path)에 해당하는 디렉토리가 존재하는지 여부 반환
-    public boolean checkDirectoryExists(String directoryFullPath) {
+    public static boolean checkDirectoryExists(String directoryFullPath) {
         File directory = new File(directoryFullPath);
         return directory.exists() && directory.isDirectory();
     }
 
     // 주어진 경로(path)에 해당하는 파일 또는 디렉토리가 존재하는지 여부 반환
-    public boolean checkFileOrDirectoryExists(String fileOrDirectoryFullPath) {
+    public static boolean checkFileOrDirectoryExists(String fileOrDirectoryFullPath) {
         File fileOrDirectory = new File(fileOrDirectoryFullPath);
         return fileOrDirectory.exists();
     }
 
     // 주어진 경로(path)가 없으면 디렉토리 생성 (하위 디렉토리 포함 여부 선택 가능)
-    public void createDirectory(String directoryFullPath, boolean includeSubdirectories) {
+    public static void createDirectory(String directoryFullPath, boolean includeSubdirectories) {
         // 디렉토리 객체 생성
         File directory = new File(directoryFullPath);
         // 디렉토리가 존재하지 않는 경우에만 디렉토리 생성
@@ -44,7 +44,7 @@ public class MyFileUtil {
     }
 
     // 주어진 경로에 파일 생성
-    public void createFile(String fileFullPath) {
+    public static void createFile(String fileFullPath) {
         // 파일 객체 생성
         File file = new File(fileFullPath);
         // 파일이 존재하지 않는 경우에만 파일 생성
@@ -58,7 +58,7 @@ public class MyFileUtil {
     }
 
     // 주어진 경로에 파일 삭제
-    public void deleteFile(String fileFullPath) {
+    public static void deleteFile(String fileFullPath) {
         // 파일 객체 생성
         File file = new File(fileFullPath);
         // 파일이 존재하는 경우에만 파일 삭제
@@ -68,7 +68,7 @@ public class MyFileUtil {
     }
 
     // 특정 경로에서 시작 키워드와 종료 키워드에 맞는 파일의 절대 경로 목록을 찾아서 String 배열로 반환 (하위 디렉토리 포함 여부 선택 가능)
-    public String[] findFiles(String path, String startKeyword, String endKeyword, boolean includeSubdirectories) {
+    public static String[] findFiles(String path, String startKeyword, String endKeyword, boolean includeSubdirectories) {
         // ArrayList 객체를 사용해서 파일 경로 저장
         List<String> fileList = new ArrayList<>();
         // 디렉토리 객체 생성
@@ -101,7 +101,7 @@ public class MyFileUtil {
     }
 
     // 특정 경로에서 시작 키워드와 종료 키워드에 맞는 파일의 절대 경로 목록을 찾아서 파일들 삭제
-    public void deleteFiles(String path, String startKeyword, String endKeyword) {
+    public static void deleteFiles(String path, String startKeyword, String endKeyword) {
         // 파일 경로 목록을 찾아서 String 배열로 반환
         String[] files = findFiles(path, startKeyword, endKeyword, true);
         // 파일 경로 목록을 순회하면서 파일 삭제
@@ -111,7 +111,7 @@ public class MyFileUtil {
     }
 
     // 파일 내용을 읽어서 String 객체로 반환
-    public String readFileContent(File file) throws IOException {
+    public static String readFileContent(File file) throws IOException {
         // StringBuilder 객체를 사용해서 파일 내용 저장
         StringBuilder contentBuilder = new StringBuilder();
         // 파일이 존재하고 파일인 경우에만 파일 내용 읽기
@@ -133,7 +133,7 @@ public class MyFileUtil {
     }
 
     // 파일 내용을 모두 읽어서 단일 String 객체로 반환
-    public String readFileContent(String fileFullPath) {
+    public static String readFileContent(String fileFullPath) {
         String content = "";
         // 파일 객체 생성
         File file = new File(fileFullPath);
@@ -149,7 +149,7 @@ public class MyFileUtil {
     }
 
     // 파일 내용을 모두 읽어서 String 배열로 반환
-    public String[] readFileContentToArray(String fileFullPath) {
+    public static String[] readFileContentToArray(String fileFullPath) {
         // ArrayList 객체를 사용해서 파일 내용 저장
         List<String> lines = new ArrayList<>();
         // 파일 객체 생성
@@ -177,7 +177,7 @@ public class MyFileUtil {
     // position: "prepend" - 파일의 맨 앞에 입력
     //           "overwrite" - 파일의 내용을 모두 지우고 입력
     //           "append" - 파일의 맨 뒤에 입력
-    public boolean writeToFile(String path, String content, String position) {
+    public static boolean writeToFile(String path, String content, String position) {
 
         // 파일의 맨 앞에 입력하는 경우 기존 내용을 읽어서 변수에 담기
         String existingContent = "";
