@@ -111,7 +111,7 @@ public class MyFileUtil {
     }
 
     // 파일 내용을 읽어서 String 객체로 반환
-    private String readFileContent(File file) throws IOException {
+    public String readFileContent(File file) throws IOException {
         // StringBuilder 객체를 사용해서 파일 내용 저장
         StringBuilder contentBuilder = new StringBuilder();
         // 파일이 존재하고 파일인 경우에만 파일 내용 읽기
