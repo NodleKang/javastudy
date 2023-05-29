@@ -1,5 +1,6 @@
 package test;
 
+import java.util.*;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -7,6 +8,9 @@ import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpMethod;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -55,40 +59,119 @@ public class MyHttpClient {
     }
 
     public String get(String url) throws Exception {
-        Request request = httpClient.newRequest(url);
+        Request request = httpClient.newRequest(url)
+                .method(HttpMethod.GET)
+                .version(HttpVersion.HTTP_1_1);
         ContentResponse response = request.send();
-        String content = response.getContentAsString();
-        return content;
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
     }
 
     public String post(String url, String body) throws Exception {
-        Request request = httpClient.newRequest(url);
-        request.method("POST");
+        Request request = httpClient.newRequest(url)
+                .method(HttpMethod.POST)
+                .version(HttpVersion.HTTP_1_1);
         request.content(new StringContentProvider(body));
         ContentResponse response = request.send();
-        String content = response.getContentAsString();
-        return content;
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
     }
 
     public String put(String url, String body) throws Exception {
-        Request request = httpClient.newRequest(url);
-        request.method("PUT");
+        Request request = httpClient.newRequest(url)
+                .method(HttpMethod.PUT)
+                .version(HttpVersion.HTTP_1_1);
         request.content(new StringContentProvider(body));
         ContentResponse response = request.send();
-        String content = response.getContentAsString();
-        return content;
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
     }
 
     public String delete(String url) throws Exception {
-        Request request = httpClient.newRequest(url);
-        request.method("DELETE");
+        Request request = httpClient.newRequest(url)
+                .method(HttpMethod.DELETE)
+                .version(HttpVersion.HTTP_1_1);
         ContentResponse response = request.send();
-        String content = response.getContentAsString();
-        return content;
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
+    }
+
+    public String get(String url, Map<String, String> headers, Map<String, String> properties) throws Exception {
+        Request request = createRequest(HttpMethod.GET, url, headers, properties);
+        ContentResponse response = request.send();
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
+    }
+
+    public String post(String url, String body, Map<String, String> headers, Map<String, String> properties) throws Exception {
+        Request request = createRequest(HttpMethod.POST, url, headers, properties);
+        request.content(new StringContentProvider(body));
+        ContentResponse response = request.send();
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
+    }
+
+    public String put(String url, String body, Map<String, String> headers, Map<String, String> properties) throws Exception {
+        Request request = createRequest(HttpMethod.PUT, url, headers, properties);
+        request.content(new StringContentProvider(body));
+        ContentResponse response = request.send();
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
+    }
+
+    public String delete(String url, Map<String, String> headers, Map<String, String> properties) throws Exception {
+        Request request = createRequest(HttpMethod.DELETE, url, headers, properties);
+        ContentResponse response = request.send();
+        if (response.getStatus() == 200) {
+            return response.getContentAsString();
+        }
+        return null;
     }
 
     public void stop() throws Exception {
         httpClient.stop();
     }
 
+    // Request 객체를 생성합니다.
+    private Request createRequest(
+            HttpMethod method,
+            String url,
+            Map<String, String> headers,
+            Map<String, String> properties
+    ) {
+        Request request = httpClient.newRequest(url)
+                .method(method)
+                .version(HttpVersion.HTTP_1_1);
+
+        // Headers 설정
+        if (headers != null) {
+            HttpFields httpFields = request.getHeaders();
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                httpFields.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        // Properties 설정
+        if (properties != null) {
+            for (Map.Entry<String, String> entry : properties.entrySet()) {
+                request.param(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return request;
+    }
 }
