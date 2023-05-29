@@ -3,7 +3,7 @@ package test;
 public class MyHttpClientTest {
     public static void main(String[] args) {
         try {
-            MyHttpClient myHttpClient = new MyHttpClient();
+            MyHttpClient myHttpClient = new MyHttpClient(5000, 5000);
 
             // GET 요청 테스트
             String url = "http://127.0.0.1:3001";
