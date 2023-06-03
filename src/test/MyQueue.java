@@ -17,17 +17,17 @@ public class MyQueue {
         queue = new LinkedBlockingQueue<>();
     }
 
-    // capacity를 변경하고 싶을 때 사용합니다.
+    // capacity(큐가 저장할수 있는 최대 요소 수)를 변경하고 싶을 때 사용합니다.
     public void setCapacity(int capacity) {
         queue = new LinkedBlockingQueue<>(capacity);
     }
 
-    // capacity를 확인하고 싶을 때 사용합니다.
+    // capacity(큐가 저장할수 있는 최대 요소 수)를 확인하고 싶을 때 사용합니다.
     public int getCapacity() {
         return queue.remainingCapacity();
     }
 
-    // 큐의 크기를 확인하고 싶을 때 사용합니다.
+    // size(현재 큐에 포함된 요소 수)를 확인하고 싶을 때 사용합니다.
     public int getSize() {
         return queue.size();
     }
