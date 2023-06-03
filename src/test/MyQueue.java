@@ -38,7 +38,7 @@ public class MyQueue {
     }
 
     // 큐에서 메시지를 가져옵니다.
-    public Object getNextMessage() throws InterruptedException {
+    public Object getNextMessage() {
         // return queue.take(); // 큐가 비어있으면 스레드가 블록됩니다.
         return queue.poll(); // 큐가 비어있으면 null을 반환합니다.
     }
