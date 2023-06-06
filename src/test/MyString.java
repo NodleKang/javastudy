@@ -2,19 +2,19 @@ package test;
 
 import java.util.*;
 
-public class MyStringUtil {
+public class MyString {
 
     // 문자열에 '#'이나 ':'과 같은 여러 구분 기호가 모두 포함되어 있는 경우 delimiter에 정규식을 사용하는 예
     // str.split("[#:]");
 
     // 문자열(str)을 주어진 구분자(delimiter)로 분리하여 문자열 배열로 반환
-    public static String[] splitStringToStringArray(String str, String delimiter) {
+    public static String[] splitToStringArray(String str, String delimiter) {
         String[] strArr = str.split(delimiter);
         return strArr;
     }
 
     // 문자열(str)을 주어진 구분자(delimiter)로 분리하여 문자열 배열로 반환(빈 문자열 제거 여부 선택)
-    public static String[] splitStringToStringArray(String str, String delimiter, boolean removeEmptyString) {
+    public static String[] splitToStringArray(String str, String delimiter, boolean removeEmptyString) {
         String[] strArr = str.split(delimiter);
         ArrayList<String> strList = new ArrayList<String>();
         for (String s : strArr) {
@@ -29,7 +29,7 @@ public class MyStringUtil {
     }
 
     // 문자열(str)을 주어진 구분자(delimiter)로 분리하여 순서가 있는 문자열 리스트로 반환
-    public static LinkedList<String> splitStringToLinkedList(String str, String delimiter) {
+    public static LinkedList<String> splitToLinkedList(String str, String delimiter) {
         String[] strArr = str.split(delimiter);
         LinkedList<String> strList = new LinkedList<String>();
         for (String s : strArr) {
@@ -39,7 +39,7 @@ public class MyStringUtil {
     }
 
     // 문자열(str)을 주어진 구분자(delimiter)로 분리하여 순서가 있는 문자열 리스트로 반환 (빈 문자열 제거)
-    public static LinkedList<String> splitStringToLinkedList(String str, String delimiter, boolean removeEmptyString) {
+    public static LinkedList<String> splitToLinkedList(String str, String delimiter, boolean removeEmptyString) {
         String[] strArr = str.split(delimiter);
         LinkedList<String> strList = new LinkedList<String>();
         for (String s : strArr) {
@@ -67,7 +67,7 @@ public class MyStringUtil {
     }
 
     // 문자열 배열을 정렬해서 반환
-    public static String[] sortStringArray(String[] strArr, boolean ascending) {
+    public static String[] sortArray(String[] strArr, boolean ascending) {
         Arrays.sort(strArr, new Comparator<String>() {
             @Override
             public int compare(String str1, String str2) {
@@ -83,7 +83,7 @@ public class MyStringUtil {
     }
 
     // 문자열 리스트를 정렬해서 반환
-    public static LinkedList<String> sortStringList(LinkedList<String> strList, boolean ascending) {
+    public static LinkedList<String> sortLinkedList(LinkedList<String> strList, boolean ascending) {
         Collections.sort(strList, new Comparator<String>() {
             @Override
             public int compare(String str1, String str2) {
