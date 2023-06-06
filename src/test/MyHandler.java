@@ -9,9 +9,9 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Logger;
 
-public class MyHttpHandler extends AbstractHandler {
+public class MyHandler extends AbstractHandler {
 
-    private static final Logger LOG = Log.getLogger(MyHttpHandler.class);
+    private static final Logger LOG = Log.getLogger(MyHandler.class);
 
     @Override
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)

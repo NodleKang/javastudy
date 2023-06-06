@@ -1,5 +1,7 @@
 package test;
 
+import test.util.MyString;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 

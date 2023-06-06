@@ -1,5 +1,7 @@
 package test;
 
+import test.http.MyProxyServer;
+
 public class MyProxyServerTest {
 
     public static void main(String[] args) {

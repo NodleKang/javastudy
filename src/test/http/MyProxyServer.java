@@ -1,9 +1,11 @@
-package test;
+package test.http;
 
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import test.http.MyProxyHandler;
+import test.http.MyProxyHandler2;
 
 public class MyProxyServer {
 
@@ -39,15 +41,18 @@ public class MyProxyServer {
     }
 
     public void start() throws Exception {
+        // jetty 서버 시작
         server.start();
     }
 
+    public void join() throws InterruptedException {
+        // 현재 스레드를 차단하고 서버가 종료될 때까지 대기
+        server.join();
+    }
+
     public void stop() throws Exception {
+        // jetty 서버 종료
         server.stop();
     }
 
-    public static void main(String[] args) throws Exception {
-        MyProxyServer proxyServer = new MyProxyServer(8080);
-        proxyServer.start();
-    }
 }

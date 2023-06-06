@@ -1,11 +1,8 @@
-package test;
+package test.http;
 
 import java.util.*;
 import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpClientTransport;
-import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.client.api.Request;
-import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpMethod;
@@ -14,10 +11,10 @@ import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-public class MyHttpClient {
+public class MyClient {
     private final HttpClient httpClient;
 
-    public MyHttpClient(int connectionTimeoutMs, int idleTimeoutMs) throws Exception {
+    public MyClient(int connectionTimeoutMs, int idleTimeoutMs) throws Exception {
 
         HttpClient httpClientTemp;
 

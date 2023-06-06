@@ -1,5 +1,8 @@
 package test;
 
+import test.util.MyDate;
+import test.util.MyFile;
+
 public class MyFileTest {
 
     public static void main(String[] args) {

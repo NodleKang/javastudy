@@ -1,5 +1,7 @@
 package test;
 
+import test.util.MyQueue;
+
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,12 +1,14 @@
 package test;
 
+import test.http.MyClient;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyHttpClientTest {
+public class MyClientTest {
     public static void main(String[] args) {
         try {
-            MyHttpClient httpClient = new MyHttpClient(5000, 5000);
+            MyClient httpClient = new MyClient(5000, 5000);
 
             // GET 요청 테스트
             String getUrl = "https://jsonplaceholder.typicode.com/posts/1";

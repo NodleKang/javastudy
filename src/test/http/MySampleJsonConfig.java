@@ -1,4 +1,4 @@
-package test;
+package test.http;
 
 import java.util.LinkedList;
 import com.google.gson.Gson;

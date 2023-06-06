@@ -1,4 +1,4 @@
-package test;
+package test.http;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 // AbstractHandler 클래스를 상속받아서 구현합니다.
 // AbstractHandler 클래스는 Jetty 서버가 요청을 처리하는 방법을 정의하는 클래스입니다.
-public class MyProxyHandler2 extends AbstractHandler {
+public class MyProxyHandler extends AbstractHandler {
 
     private final Logger logger = Log.getLogger(getClass());
 
