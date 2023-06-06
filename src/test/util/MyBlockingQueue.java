@@ -4,16 +4,22 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 // LinkedBlockingQueue를 사용하여 메시지를 저장하는 큐를 구현합니다.
 // LinkedBlockingQueue는 내부적으로 ReentrantLock을 사용하여 스레드 안전성을 보장합니다.
-public class MyQueue {
+
+// LinkedBlockingQueue 사용이 이로울 때
+// 요소를 추가하려는 스레드가 큐가 가득 찬 경우
+// 요소를 가져오려는 스레드가 큐가 비어 있는 경우
+// 기다려야 하는 블로킹 동작이 필요한 경우 LinkedBlockingQueue를 선택하는 것이 적절합니다.
+// 이는 생산자와 소비자가 효율적으로 동기화되고 작업을 조정하는 데 도움이 됩니다.
+public class MyBlockingQueue {
     private LinkedBlockingQueue<Object> queue;
 
     // LinkedBlockingQueue의 생성자는 capacity를 인자로 받습니다.
-    public MyQueue(int capacity) {
+    public MyBlockingQueue(int capacity) {
         queue = new LinkedBlockingQueue<>(capacity);
     }
 
     // capacity를 지정하지 않으면 Integer.MAX_VALUE로 지정됩니다.
-    public MyQueue() {
+    public MyBlockingQueue() {
         queue = new LinkedBlockingQueue<>();
     }
 
