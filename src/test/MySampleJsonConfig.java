@@ -24,7 +24,8 @@ import com.google.gson.Gson;
 //        }
 //    ]
 //}
-public class SampleJsonConfig {
+public class MySampleJsonConfig {
+
     private LinkedList<ConfigItem> SampleJsonConfig;
 
     public LinkedList<ConfigItem> getSampleJsonConfig() {
@@ -35,12 +36,12 @@ public class SampleJsonConfig {
         SampleJsonConfig = sampleJsonConfig;
     }
 
-    public static SampleJsonConfig fromJson(String json) {
+    public static MySampleJsonConfig fromJson(String json) {
         Gson gson = new Gson();
-        return gson.fromJson(json, SampleJsonConfig.class);
+        return gson.fromJson(json, MySampleJsonConfig.class);
     }
 
-    public static String toJson(SampleJsonConfig config) {
+    public static String toJson(MySampleJsonConfig config) {
         Gson gson = new Gson();
         return gson.toJson(config);
     }

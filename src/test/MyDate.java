@@ -3,7 +3,7 @@ package test;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class MyDateUtil {
+public class MyDate {
 
     // 현재 시각을 LocalDateTime 객체로 반환
     public LocalDateTime now() {

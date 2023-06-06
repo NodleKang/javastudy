@@ -3,7 +3,7 @@ package test;
 import java.io.*;
 import java.util.*;
 
-public class MyFileUtil {
+public class MyFile {
 
     // 주어진 경로(path)에 해당하는 파일이 존재하는지 여부 반환
     public static boolean checkFileExists(String fileFullPath) {
