@@ -2,6 +2,7 @@ package test.util;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+// ConcurrentLinkedQueue는 메시지의 순서를 보장하지 않습니다.
 public class MyConcurrentQueue {
 
     private ConcurrentLinkedQueue<Object> queue;

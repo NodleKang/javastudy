@@ -55,7 +55,7 @@ public class MyQueueTest {
                     MyBlockingQueue queue = myQueueMap.get(rmsgs[1]);
                     // 큐가 존재하고 큐가 비어있지 않으면 큐에서 메시지를 수신합니다.
                     if (queue != null && !queue.isEmpty()) {
-                        System.out.println(queue.getNextMessage());
+                        System.out.println(queue.getMessage());
                     }
                 }
             }
