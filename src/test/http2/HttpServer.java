@@ -6,6 +6,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import test.http2.servlet.*;
 
 // jetty 웹서버를 생성하고 실행하는 클래스
 public class HttpServer extends Thread {
@@ -45,13 +46,18 @@ public class HttpServer extends Thread {
         connector.setPort(port);
         server.setConnectors(new ServerConnector[] { connector });
 
-        // 루투 컨텍스트 경로를 "/"로 설정
+        // 루트 컨텍스트 경로를 "/"로 설정
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-//        context.addServlet(MyServlet.class, "/");
-//        context.addServlet(new ServletHolder(new MyServlet()), "/test");
-//        context.addServlet(new ServletHolder(new MyServlet()), "/test");
+        // 컨텍스트 경로 설정
+        // 클래스를 기반으로 동적으로 인스턴스를 생성하여 서블릿으로 등록하는 방식
+        // context.addServlet(new ServletHolder(PathServlet.class), "/path/*");
+        // context.addServlet(new ServletHolder(PathServlet.class), "/path/*");
+        String targetPath = "http://127.0.0.1:5001/check";
+        ProxyServlet proxyServlet = new ProxyServlet();
+        proxyServlet.setTargetPath(targetPath);
+        context.addServlet(new ServletHolder(proxyServlet), "/proxy/*");
 
         // 핸들러 설정
         HandlerCollection handlers = new HandlerCollection();
