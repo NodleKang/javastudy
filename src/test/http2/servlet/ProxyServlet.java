@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Enumeration;
 
 public class ProxyServlet extends HttpServlet {
 
@@ -63,10 +64,16 @@ public class ProxyServlet extends HttpServlet {
         con.setRequestMethod(requestMethod);
 
         // 원본 요청 헤더를 프록시 요청에 복사
-        req.getHeaderNames().asIterator().forEachRemaining(headerName -> {
+        /*req.getHeaderNames().asIterator().forEachRemaining(headerName -> {
             String headerValue = req.getHeader(headerName);
             con.setRequestProperty(headerName, headerValue);
-        });
+        });*/
+        Enumeration<String> headerNames = req.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = req.getHeader(headerName);
+            con.setRequestProperty(headerName, headerValue);
+        }
 
         // 원본 요청 바디를 프록시 요청에 복사
         copyRequestBody(req, con);
