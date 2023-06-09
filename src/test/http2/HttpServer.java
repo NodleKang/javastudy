@@ -52,8 +52,10 @@ public class HttpServer extends Thread {
 
         // 컨텍스트 경로 설정
         // 클래스를 기반으로 동적으로 인스턴스를 생성하여 서블릿으로 등록하는 방식
-        // context.addServlet(new ServletHolder(PathServlet.class), "/path/*");
-        // context.addServlet(new ServletHolder(PathServlet.class), "/path/*");
+        context.addServlet(new ServletHolder(PathServlet.class), "/path/*");
+
+        // 컨텍스트 경로 설정
+        // 인스턴스를 생성하여 원하는 설정을 하고, 서블릿으로 등록하는 방식
         String targetPath = "http://127.0.0.1:5001/check";
         ProxyServlet proxyServlet = new ProxyServlet();
         proxyServlet.setTargetPath(targetPath);
