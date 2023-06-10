@@ -197,33 +197,6 @@ public class MessageQueue<V> {
         }
     }
 
-    // 메시지 상태를 기반으로 메시지를 큐에서 제거하는 메서드
-    public synchronized void removeMessageByStatus(MessageStatus status) {
-        Iterator<V> iterator = queue.iterator();
-        while (iterator.hasNext()) {
-            V message = iterator.next();
-            if (messageStatusMap.get(message) == status) {
-                iterator.remove();
-                removeMessage(message);
-            }
-        }
-    }
-
-    // 메시지 타임아웃을 기반으로 메시지를 큐에서 제거하는 메서드
-    public synchronized void removeMessageByTimeout(long timeout) {
-        Iterator<V> iterator = queue.iterator();
-        while (iterator.hasNext()) {
-            V message = iterator.next();
-            long messageTimeout = messageTimeoutMap.getOrDefault(message, 0L);
-            long messageTimestamp = messageTimestampMap.getOrDefault(message, 0L);
-            if (messageTimeout > 0L && messageTimestamp > 0L
-                    && System.currentTimeMillis() - messageTimestamp > messageTimeout) {
-                iterator.remove();
-                removeMessage(message);
-            }
-        }
-    }
-
     // 메시지 실패 횟수를 기반으로 메시지를 큐에서 제거하는 메서드
     public synchronized void removeMessageByFailedCount(int count) {
         Iterator<V> iterator = queue.iterator();
