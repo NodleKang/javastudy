@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class MessageQueue<V> {
 
-    // 메시지를 저장하는 큐
+    // 메시지를 저장하는 큐 (메시지가 입력된 순서 보장)
     private LinkedBlockingQueue<V> queue;
     // 메시지 아이디와 메시지를 매핑하는 맵
     private ConcurrentHashMap<String, V> idMessageMap;
