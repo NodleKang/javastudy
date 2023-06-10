@@ -2,7 +2,7 @@ package test;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import test.http.MySampleJsonConfig;
+import test.httpbackup.MySampleJsonConfig;
 import test.util.MyJson;
 
 import java.util.LinkedList;

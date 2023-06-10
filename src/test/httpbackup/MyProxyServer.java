@@ -1,11 +1,9 @@
-package test.http;
+package test.httpbackup;
 
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import test.http.MyProxyHandler;
-import test.http.MyProxyHandler2;
 
 public class MyProxyServer {
 

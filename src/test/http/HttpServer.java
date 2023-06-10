@@ -1,4 +1,4 @@
-package test.http2;
+package test.http;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -6,7 +6,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import test.http2.servlet.*;
+import test.http.servlet.*;
 
 // jetty 웹서버를 생성하고 실행하는 클래스
 public class HttpServer extends Thread {

@@ -1,6 +1,6 @@
 package test;
 
-import test.http.MyServer;
+import test.httpbackup.MyServer;
 
 public class MyServerTest {
 

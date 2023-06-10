@@ -1,11 +1,11 @@
-package test.http2.servlet;
+package test.http.servlet;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import test.http2.handler.PathHandler;
+import test.http.handler.PathHandler;
 
 public class PathServlet  extends HttpServlet {
 

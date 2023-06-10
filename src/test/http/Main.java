@@ -1,4 +1,4 @@
-package test.http2;
+package test.http;
 
 public class Main {
 

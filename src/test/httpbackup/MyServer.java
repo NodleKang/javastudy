@@ -1,8 +1,7 @@
-package test.http;
+package test.httpbackup;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 public class MyServer {
 

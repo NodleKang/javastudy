@@ -1,4 +1,4 @@
-package test.http2.handler;
+package test.http.handler;
 
 import org.eclipse.jetty.util.IO;
 

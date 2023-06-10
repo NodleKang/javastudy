@@ -1,4 +1,4 @@
-package test.mq;
+package test.util;
 
 import java.util.Iterator;
 import java.util.*;

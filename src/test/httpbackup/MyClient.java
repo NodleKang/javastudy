@@ -1,4 +1,4 @@
-package test.http;
+package test.httpbackup;
 
 import java.util.*;
 import org.eclipse.jetty.client.HttpClient;

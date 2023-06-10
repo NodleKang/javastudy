@@ -1,6 +1,6 @@
 package test;
 
-import test.http.MyProxyServer;
+import test.httpbackup.MyProxyServer;
 
 public class MyProxyServerTest {
 

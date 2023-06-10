@@ -1,4 +1,4 @@
-package test.http;
+package test.httpbackup;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class MyRequestHandlerPath02 extends AbstractHandler {
+public class MyRequestHandlerPath03 extends AbstractHandler {
     @Override
     public void handle(
             String target,

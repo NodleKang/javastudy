@@ -1,6 +1,6 @@
 package test;
 
-import test.http.MyClient;
+import test.httpbackup.MyClient;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package test.http;
+package test.httpbackup;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.Enumeration;
 
 // AbstractHandler 클래스를 상속받아서 구현합니다.
