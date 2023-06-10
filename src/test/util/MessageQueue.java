@@ -59,6 +59,16 @@ public class MessageQueue<V> {
         this.capacity = capacity;
     }
 
+    // 큐의 용량을 반환하는 메서드
+    public synchronized int getCapacity() {
+        return this.capacity;
+    }
+
+    // 큐의 크기를 반환하는 메서드
+    public synchronized int size() {
+        return queue.size();
+    }
+
     // 메시지를 큐에 추가하는 메서드
     public void addMessage(V message) {
 
