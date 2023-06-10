@@ -44,7 +44,7 @@ public class MessageQueue<V> {
     }
 
     // 맵을 초기화하는 메서드
-    private void initialize() {
+    private synchronized void initialize() {
         this.queue = new LinkedBlockingQueue<>();
         this.idMessageMap = new ConcurrentHashMap<>();
         this.messageIdMap = new ConcurrentHashMap<>();
@@ -55,7 +55,7 @@ public class MessageQueue<V> {
     }
 
     // 큐의 용량을 설정하는 메서드
-    public void setCapacity(int capacity) {
+    public synchronized void setCapacity(int capacity) {
         this.capacity = capacity;
     }
 
@@ -84,35 +84,31 @@ public class MessageQueue<V> {
         // 메시지 가져오기 로직을 동기화 블록으로 감싸기
         synchronized (this) {
 
-            // 큐에 메시지가 있으면 메시지를 가져옴
-            for (V message : queue) {
+            Iterator<V> iterator = queue.iterator();
+            while (iterator.hasNext()) {
 
+                V message = iterator.next();
                 MessageStatus messageStatus = messageStatusMap.get(message);
 
-                // 메시지 상태가 PENDING이면 메시지 상태를 IN_PROGRESS로 변경하고 메시지를 반환
                 if (messageStatus == MessageStatus.PENDING) {
                     messageStatusMap.put(message, MessageStatus.IN_PROGRESS);
                     messageTimeoutMap.put(message, 0L);
                     messageTimestampMap.put(message, System.currentTimeMillis());
                     return message;
                 } else if (messageStatus == MessageStatus.IN_PROGRESS) {
-                    long timeout = messageTimestampMap.get(message);
-                    if (timeout != 0L && System.currentTimeMillis() - timeout > 0) {
-                        messageStatusMap.put(message, MessageStatus.FAILED);
-                        messageFailedCountMap.put(message, messageFailedCountMap.get(message) + 1);
-                        return message;
-                    }
+                    isMessageTimeout(message);
                 } else if (messageStatus == MessageStatus.FAILED) {
                     if (messageFailedCountMap.get(message) < MAX_MESSAGE_FAILED_COUNT) {
                         messageStatusMap.put(message, MessageStatus.IN_PROGRESS);
+                        messageTimeoutMap.put(message, 0L);
+                        messageTimestampMap.put(message, System.currentTimeMillis());
                         return message;
                     } else {
-                        messageStatusMap.put(message, MessageStatus.PENDING);
-                        messageFailedCountMap.put(message, 0);
-                        messageTimestampMap.put(message, System.currentTimeMillis() + 1000);
+                        removeMessage(message);
                     }
                 }
             }
+
         }
 
         // 큐에 메시지가 없으면 null 반환
@@ -131,50 +127,61 @@ public class MessageQueue<V> {
 
     // 메시지 성공시 메시지 아이디를 기반으로 메시지를 큐에서 제거하는 메서드
     public void handleMessageSuccessById(String id) {
-        removeMessage(getMessageById(id));
+        V message = getMessageById(id);
+        if (message != null) {
+            removeMessage(message);
+        }
     }
 
-    // 메시지 실패시 메시지 상태를 PENDING으로 변경하고 메시지 실패 횟수를 증가시키는 메서드
-    // 메시지 상태를 PENDING으로 변경하고 메시지 실패 횟수를 증가시키는 메서드
-    public void handleMessageFailure(V message) {
-        messageStatusMap.put(message, MessageStatus.PENDING);
-        messageFailedCountMap.put(message, messageFailedCountMap.get(message) + 1);
+    // 메시지 실패 처리 메서드
+    // 메시지 실패 횟수를 가져오고 메시지 실패 횟수가 최대값보다 작으면 메시지 상태를 PENDING으로 변경하고 메시지 실패 횟수를 1 증가시킨다.
+    public synchronized void handleMessageFailure(V message) {
+        int messageFailedCount = messageFailedCountMap.getOrDefault(message, 0);
+        if (messageFailedCount < MAX_MESSAGE_FAILED_COUNT) {
+            messageStatusMap.put(message, MessageStatus.PENDING);
+            messageFailedCountMap.put(message, messageFailedCount + 1);
+        }
     }
 
     // 메시지 상태가 PENDING인지 확인하는 메서드
-    public boolean isMessagePending(V message) {
+    public synchronized boolean isMessagePending(V message) {
         return messageStatusMap.getOrDefault(message, MessageStatus.PENDING) == MessageStatus.PENDING;
     }
 
     // 메시지 상태가 IN_PROGRESS인지 확인하는 메서드
-    public boolean isMessageInProgress(V message) {
+    public synchronized boolean isMessageInProgress(V message) {
         return messageStatusMap.getOrDefault(message, MessageStatus.IN_PROGRESS) == MessageStatus.IN_PROGRESS;
     }
 
     // 메시지 상태가 FAILED인지 확인하는 메서드
-    public boolean isMessageFailed(V message) {
+    public synchronized boolean isMessageFailed(V message) {
         return messageStatusMap.getOrDefault(message, MessageStatus.FAILED) == MessageStatus.FAILED;
     }
 
-    // 메시지 타임아웃이 지났는지 확인하는 메서드
-    public boolean isMessageTimeout(V message) {
+    // 메시지 타임아웃이 지났는지 확인하고 메시지 실패 처리하는 메서드
+    public synchronized boolean isMessageTimeout(V message) {
         long messageTimeout = messageTimeoutMap.getOrDefault(message, 0L);
         long messageTimestamp = messageTimestampMap.getOrDefault(message, 0L);
-        return messageTimestamp > 0L
+        if (messageTimestamp > 0L
                 && messageTimeout > 0L
-                && System.currentTimeMillis() - messageTimestamp > messageTimeout;
+                && System.currentTimeMillis() - messageTimestamp > messageTimeout) {
+            handleMessageFailure(message);
+            return true;
+        }
+        return false;
     }
 
     // 메시지 실패 횟수가 최대값을 초과했는지 확인하는 메서드
-    public boolean isMessageFailedCountExceeded(V message) {
+    public synchronized boolean isMessageFailedCountExceeded(V message) {
         int failedCount = messageFailedCountMap.getOrDefault(message, 0);
         return failedCount >= MAX_MESSAGE_FAILED_COUNT;
     }
 
     // 메시지를 큐에서 제거하는 메서드
-    public void removeMessage(V message) {
+    public synchronized void removeMessage(V message) {
         queue.remove(message);
-        idMessageMap.remove(messageIdMap.get(message));
+        String id = messageIdMap.get(message);
+        idMessageMap.remove(id);
         messageIdMap.remove(message);
         messageStatusMap.remove(message);
         messageTimeoutMap.remove(message);
@@ -183,7 +190,7 @@ public class MessageQueue<V> {
     }
 
     // 메시지 아이디를 기반으로 메시지를 큐에서 제거하는 메서드
-    public void removeMessageById(String id) {
+    public synchronized void removeMessageById(String id) {
         V message = idMessageMap.get(id);
         if (message != null) {
             removeMessage(message);
@@ -191,11 +198,11 @@ public class MessageQueue<V> {
     }
 
     // 메시지 상태를 기반으로 메시지를 큐에서 제거하는 메서드
-    public void removeMessageByStatus(MessageStatus status) {
+    public synchronized void removeMessageByStatus(MessageStatus status) {
         Iterator<V> iterator = queue.iterator();
         while (iterator.hasNext()) {
             V message = iterator.next();
-            if (messageStatusMap.get(message).equals(status)) {
+            if (messageStatusMap.get(message) == status) {
                 iterator.remove();
                 removeMessage(message);
             }
@@ -203,12 +210,12 @@ public class MessageQueue<V> {
     }
 
     // 메시지 타임아웃을 기반으로 메시지를 큐에서 제거하는 메서드
-    public void removeMessageByTimeout(long timeout) {
+    public synchronized void removeMessageByTimeout(long timeout) {
         Iterator<V> iterator = queue.iterator();
         while (iterator.hasNext()) {
             V message = iterator.next();
-            long messageTimeout = messageTimeoutMap.get(message);
-            long messageTimestamp = messageTimestampMap.get(message);
+            long messageTimeout = messageTimeoutMap.getOrDefault(message, 0L);
+            long messageTimestamp = messageTimestampMap.getOrDefault(message, 0L);
             if (messageTimeout > 0L && messageTimestamp > 0L
                     && System.currentTimeMillis() - messageTimestamp > messageTimeout) {
                 iterator.remove();
@@ -218,7 +225,7 @@ public class MessageQueue<V> {
     }
 
     // 메시지 실패 횟수를 기반으로 메시지를 큐에서 제거하는 메서드
-    public void removeMessageByFailedCount(int count) {
+    public synchronized void removeMessageByFailedCount(int count) {
         Iterator<V> iterator = queue.iterator();
         while (iterator.hasNext()) {
             V message = iterator.next();
