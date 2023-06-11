@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
+
+import com.google.gson.Gson;
 import test.http.handler.PathHandler;
 
 public class PathServlet  extends HttpServlet {
@@ -66,6 +68,23 @@ public class PathServlet  extends HttpServlet {
         // 이 메소드는 서블릿이 종료될 때 한 번만 실행됩니다.
         // 서블릿이 실행되는 동안 필요한 작업이 없으면 이 메소드는 비워둡니다.
         System.out.println("destroy");
+    }
+
+    // 요청 본문을 JSON으로 읽어서 객체로 변환합니다.
+    // 요청 본문이 JSON 형식이 아니거나 요청 본문이 없으면 IOException이 발생합니다.
+    private Gson readBodyAsJson(HttpServletRequest req) throws IOException {
+        String body = req.getReader().readLine();
+        Gson gson = new Gson();
+        return gson.fromJson(body, Gson.class);
+    }
+
+    // 객체를 JSON으로 변환해서 응답 본문에 씁니다.
+    // 객체를 JSON으로 변환하는 데 실패하면 IOException이 발생합니다.
+    private void writeJson(HttpServletResponse resp, Object obj) throws IOException {
+        resp.setStatus(200);
+        resp.setHeader("Content-Type", "application/json");
+        Gson gson = new Gson();
+        resp.getWriter().write(gson.toJson(obj));
     }
 
     /*
