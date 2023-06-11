@@ -125,6 +125,20 @@ public class MessageQueue<V> {
         return null;
     }
 
+    public synchronized void restoreMessageById(String id) {
+        V message = getMessageById(id);
+        if (message != null) {
+            messageStatusMap.put(message, MessageStatus.PENDING);
+            messageTimeoutMap.put(message, 0L);
+            messageTimestampMap.put(message, 0L);
+        }
+    }
+
+    // 메시지를 기반으로 메시지 아이디를 반환하는 메서드
+    public String getMessageId(V message) {
+        return messageIdMap.get(message);
+    }
+
     // 메시지 아이디를 기반으로 메시지를 큐에서 가져오는 메서드
     public V getMessageById(String id) {
         return idMessageMap.get(id);
@@ -150,6 +164,14 @@ public class MessageQueue<V> {
         if (messageFailedCount < MAX_MESSAGE_FAILED_COUNT) {
             messageStatusMap.put(message, MessageStatus.PENDING);
             messageFailedCountMap.put(message, messageFailedCount + 1);
+        }
+    }
+
+    // 메시지 실패시 메시지 아이디를 기반으로 실패 처리 메서드
+    public synchronized void handleMessageFailureById(String id) {
+        V message = getMessageById(id);
+        if (message != null) {
+            handleMessageFailure(message);
         }
     }
 
