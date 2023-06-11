@@ -1,15 +1,30 @@
 package test.a2022a;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import test.util.MyFile;
+import test.util.MyJson;
 import test.util.MyString;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class RunManager {
 
     public static void main(String[] args) {
 
-        testOnConsole();
+        //testOnConsole();
+
+        if (args.length > 0) {
+            String path = "C:/sp_workspace/javastudy/src/test/a2022a/";
+            String proxyFilePath = path + args[0];
+            if (!proxyFilePath.endsWith(".json")) {
+                proxyFilePath = proxyFilePath + ".json";
+            }
+            String content = MyFile.readFileContent(proxyFilePath);
+            JsonObject jsonRouteRule = MyJson.convertStringToJsonObject(content);
+            testOnHttp(jsonRouteRule);
+        }
     }
 
     // 콘솔 입력 기반으로 테스트
@@ -48,6 +63,27 @@ public class RunManager {
                         System.out.println(content);
                     }
                 }
+            }
+        }
+
+    }
+
+    //
+    public static void testOnHttp(JsonObject jsonRouteRule) {
+
+        int port = jsonRouteRule.get("port").getAsInt();
+        HashMap<String, String> proxyMap = new HashMap<>();
+        JsonArray jsonRouteArray = jsonRouteRule.get("routes").getAsJsonArray();
+        for (int i=0; i < jsonRouteArray.size(); i++) {
+            JsonObject jsonRule = jsonRouteArray.get(i).getAsJsonObject();
+            proxyMap.put(jsonRule.get("pathPrefix").getAsString(), jsonRule.get("url").getAsString());
+        }
+        MyServer server = MyServer.getInstance(port, proxyMap);
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
