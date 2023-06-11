@@ -9,21 +9,21 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import test.http.servlet.*;
 
 // jetty 웹서버를 생성하고 실행하는 클래스
-public class HttpServer extends Thread {
+public class MyServer extends Thread {
 
-    private static volatile HttpServer instance = null;
+    private static volatile MyServer instance = null;
     private Server server;
     private int port;
 
-    private HttpServer(int port) {
+    private MyServer(int port) {
         this.port = port;
     }
 
     // 싱글톤 패턴을 따르며, 처음 호출될 때만 HttpServer 인스턴스를 생성하고 스레드로 실행합니다.
-    public static HttpServer getInstance(int port) {
+    public static MyServer getInstance(int port) {
         if (instance == null) {
-            synchronized (HttpServer.class) {
-                instance = new HttpServer(port);
+            synchronized (MyServer.class) {
+                instance = new MyServer(port);
                 instance.setName("HttpServer");
                 instance.setDaemon(true);
                 instance.start();
