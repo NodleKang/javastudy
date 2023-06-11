@@ -78,7 +78,7 @@ public class MessageQueue<V> {
         }
         // 큐에 메시지를 추가하고 메시지와 메시지 아이디를 매핑하는 맵에 메시지와 메시지 아이디를 추가
         if (queue.offer(message)) {
-            String id = UUID.randomUUID().toString();
+            String id = UUID.randomUUID().toString().substring(0, 8);
             idMessageMap.put(id, message);
             messageIdMap.put(message, id);
             messageStatusMap.put(message, MessageStatus.PENDING);
