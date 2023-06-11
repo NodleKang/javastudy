@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PathServlet extends HttpServlet {
+public class MyServlet extends HttpServlet {
 
     private ConcurrentHashMap<String, MessageQueue> mqMap = new ConcurrentHashMap<String, MessageQueue>();
 
@@ -40,13 +40,15 @@ public class PathServlet extends HttpServlet {
         if (uri.startsWith("/CREATE/")) {
             resBodyAsJson = handleCreate(queueName, reqBodyAsJson);
         } else if (uri.startsWith("/SEND")) {
-            handleSend(req, resp);
+            resBodyAsJson = handleSend(queueName, reqBodyAsJson);
         } else if (uri.startsWith("/RECEIVE")) {
-            handleReceive(req, resp);
+            resBodyAsJson = handleReceive(queueName);
         } else if (uri.startsWith("/ACK")) {
-            handleAck(req, resp);
+            String messageId = paths[2];
+            resBodyAsJson = handleAck(queueName, messageId);
         }else if (uri.startsWith("/FAIL")) {
-            handleFail(req, resp);
+            String messageId = paths[2];
+            resBodyAsJson = handleFail(queueName, messageId);
         } else {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
@@ -72,20 +74,62 @@ public class PathServlet extends HttpServlet {
         return resBodyAsJson;
     }
 
-    private void handleSend(HttpServletRequest req, HttpServletResponse resp) {
+    private JsonObject handleSend(String queueName, JsonObject reqBodyAsJson) {
+        JsonObject resBodyAsJson = new JsonObject();
 
+        MessageQueue<String> mq = mqMap.get(queueName);
+        if (mq == null) {
+            resBodyAsJson.addProperty("Result", "Queue does not exist");
+        } else if (mq.size() >= mq.getCapacity()) {
+            resBodyAsJson.addProperty("Result", "Queue Full");
+        } else {
+            mq.addMessage(reqBodyAsJson.get("Message").getAsString());
+            resBodyAsJson.addProperty("Result", "OK");
+        }
+
+        return resBodyAsJson;
     }
 
-    private void handleReceive(HttpServletRequest req, HttpServletResponse resp) {
+    private JsonObject handleReceive(String queueName) {
+        JsonObject resBodyAsJson = new JsonObject();
 
+        MessageQueue<String> mq = mqMap.get(queueName);
+        if (mq == null) {
+            resBodyAsJson.addProperty("Result", "No Message");
+        } else if (mq.size() == 0) {
+            resBodyAsJson.addProperty("Result", "No Message");
+        } else {
+            String message = mq.getMessage();
+            resBodyAsJson.addProperty("Result", "OK");
+            resBodyAsJson.addProperty("MessageId", mq.getMessageId(message));
+            resBodyAsJson.addProperty("Message", message);
+        }
+
+        return resBodyAsJson;
     }
 
-    private void handleAck(HttpServletRequest req, HttpServletResponse resp) {
+    private JsonObject handleAck(String queueName, String messageId) {
+        JsonObject resBodyAsJson = new JsonObject();
 
+        MessageQueue<String> mq = mqMap.get(queueName);
+        if (mq != null) {
+            mq.handleMessageSuccessById(messageId);
+            resBodyAsJson.addProperty("Result", "OK");
+        }
+
+        return resBodyAsJson;
     }
 
-    private void handleFail(HttpServletRequest req, HttpServletResponse resp) {
+    private JsonObject handleFail(String queueName, String messageId) {
+        JsonObject resBodyAsJson = new JsonObject();
 
+        MessageQueue<String> mq = mqMap.get(queueName);
+        if (mq != null) {
+            mq.handleMessageFailureById(messageId);
+            resBodyAsJson.addProperty("Result", "OK");
+        }
+
+        return resBodyAsJson;
     }
 
     // 요청 본문을 JSON으로 읽어서 객체로 변환합니다.

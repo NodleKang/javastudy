@@ -51,7 +51,7 @@ public class MyServer extends Thread {
 
         // 컨텍스트 경로 설정
         // 클래스를 기반으로 동적으로 인스턴스를 생성하여 서블릿으로 등록하는 방식
-        context.addServlet(new ServletHolder(PathServlet.class), "/*");
+        context.addServlet(new ServletHolder(MyServlet.class), "/*");
 
         // 핸들러 설정
         HandlerCollection handlers = new HandlerCollection();
