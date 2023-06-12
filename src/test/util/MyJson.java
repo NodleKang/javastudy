@@ -30,4 +30,12 @@ public class MyJson {
         return jsonStr;
     }
 
+    public static LinkedList<String> convertJsonArrayToStringList(JsonArray jsonArray) {
+        LinkedList<String> list = new LinkedList<String>();
+        for (JsonElement element: jsonArray) {
+            list.add(element.getAsString());
+        }
+        return list;
+    }
+
 }
