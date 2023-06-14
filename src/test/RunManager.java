@@ -35,15 +35,16 @@ public class RunManager {
 
     public static void testOnConsole() {
 
-      Scanner sc = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
-      while (true) {
-          String line = sc.nextLine();
-         if (line.equals("exit")) {
-            break;
-         } else {
-            String[] commands = MyString.splitToStringArray(line, " ", true);
-         }
+        while (true) {
+            String line = sc.nextLine();
+            if (line.equals("exit")) {
+                break;
+            } else {
+                String[] commands = MyString.splitToStringArray(line, " ", true);
+            }
+        }
     }
 
 }
