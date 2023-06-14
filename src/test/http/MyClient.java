@@ -12,7 +12,29 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 public class MyClient {
+
     private final HttpClient httpClient;
+
+    public MyClient() throws Exception {
+
+        // HttpClient의 스레드 풀을 설정합니다.
+        // 스레드 풀의 크기는 동시에 처리할 수 있는 요청의 개수를 의미합니다.
+        // 스레드 풀의 크기를 설정하지 않으면 기본값으로 200이 설정됩니다.
+        this.httpClient = new HttpClient();
+        this.httpClient.setExecutor(new QueuedThreadPool(100));
+
+        // 리다아렉트 활성화 여부를 설정합니다. (기본값: true = 활성화)
+        this.httpClient.setFollowRedirects(true);
+
+        // Connection timeout 설정(단위: ms) 제한 없음
+        this.httpClient.setConnectTimeout(0);
+
+        // 읽기 시간 초과 설정(단위: ms)  제한 없음
+        this.httpClient.setIdleTimeout(0);
+
+        // HttpClient를 시작합니다.
+        this.httpClient.start();
+    }
 
     public MyClient(int connectionTimeoutMs, int idleTimeoutMs) throws Exception {
 
@@ -33,8 +55,8 @@ public class MyClient {
         // HttpClient의 스레드 풀을 설정합니다.
         // 스레드 풀의 크기는 동시에 처리할 수 있는 요청의 개수를 의미합니다.
         // 스레드 풀의 크기를 설정하지 않으면 기본값으로 200이 설정됩니다.
-        httpClient = httpClientTemp;
-        httpClient.setExecutor(new QueuedThreadPool(100));
+        this.httpClient = httpClientTemp;
+        this.httpClient.setExecutor(new QueuedThreadPool(100));
 
         // HttpClient의 트랜스포트를 설정합니다.
         // 트랜스포트는 HTTP, HTTPS, HTTP/2 등을 설정할 수 있습니다.
@@ -42,16 +64,16 @@ public class MyClient {
         // httpClient.setTransport(new HttpClientTransportOverHTTP2());
 
         // 리다아렉트 활성화 여부를 설정합니다. (기본값: true = 활성화)
-        httpClient.setFollowRedirects(true);
+        this.httpClient.setFollowRedirects(true);
 
         // Connection timeout 설정(단위: ms)
-        httpClient.setConnectTimeout(connectionTimeoutMs);
+        this.httpClient.setConnectTimeout(connectionTimeoutMs);
 
         // 읽기 시간 초과 설정(단위: ms)
-        httpClient.setIdleTimeout(idleTimeoutMs);
+        this.httpClient.setIdleTimeout(idleTimeoutMs);
 
         // HttpClient를 시작합니다.
-        httpClient.start();
+        this.httpClient.start();
     }
 
     public String get(String url) throws Exception {
