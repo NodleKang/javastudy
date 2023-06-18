@@ -91,6 +91,8 @@ public class ProxyServlet extends HttpServlet {
         con.disconnect();
     }
 
+    // 대상 경로와 요청 URI를 결합하여 대상 URL을 생성합니다.
+    // 요청에 쿼리 문자열도 포함되어 있는 경우에도 대응합니다.
     private String createTargetUrl(HttpServletRequest req) {
         String targetUrl = targetPath + req.getRequestURI();
         String queryString = req.getQueryString();
@@ -100,6 +102,7 @@ public class ProxyServlet extends HttpServlet {
         return targetUrl;
     }
 
+    // 원본 요청 헤더를 프록시 요청에 복사합니다.
     private void copyRequestHeaders(HttpServletRequest req, HttpURLConnection con) throws IOException {
 //        req.getHeaderNames().asIterator().forEachRemaining(headerName -> {
 //            String headerValue = req.getHeader(headerName);
@@ -113,6 +116,7 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
+    // 원본 요청 파라미터를 프록시 요청에 복사합니다.
     private void copyRequestParameters(HttpServletRequest req, HttpURLConnection con) throws IOException {
 //        req.getParameterMap().forEach((paramName, paramValues) -> {
 //            for (String paramValue : paramValues) {
@@ -129,6 +133,7 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
+    // 프록시 요청 바디를 원본 요청에 복사합니다.
     private void copyRequestBody(HttpServletRequest req, HttpURLConnection con) throws IOException {
         int contentLength = req.getContentLength();
         if (contentLength > 0) {
@@ -144,6 +149,7 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
+    // 프록시 응답 헤더를 원본 응답에 복사합니다.
     private void copyResponseHeaders(HttpURLConnection con, HttpServletResponse resp) throws IOException {
 //        con.getHeaderFields().forEach((headerName, headerValues) -> {
 //            if (headerName != null) {
@@ -164,6 +170,7 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
+    // 프록시 응답 파라미터를 원본 응답에 복사합니다.
     private void copyResponseParameters(HttpURLConnection con, HttpServletResponse resp) throws IOException {
 //        con.getHeaderFields().forEach((headerName, headerValues) -> {
 //            if (headerName != null) {
@@ -184,6 +191,7 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
+    // 프록시 응답 바디를 원본 응답에 복사합니다.
     private void copyResponseBody(HttpURLConnection con, HttpServletResponse resp) throws IOException {
         InputStream inputStream = null;
         OutputStream outputStream = null;
