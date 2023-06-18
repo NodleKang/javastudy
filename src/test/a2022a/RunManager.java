@@ -6,6 +6,7 @@ import test.util.MyFile;
 import test.util.MyJson;
 import test.util.MyString;
 
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -15,8 +16,10 @@ public class RunManager {
 
         //testOnConsole();
 
+        // 실행시 첫 번째 인자로 json 파일명을 넘겨줘야 함
         if (args.length > 0) {
-            String path = "C:/sp_workspace/javastudy/src/test/a2022a/";
+            String path = Paths.get("").toAbsolutePath().toString();
+            path = path + "/src/test/a2022a/";
             String proxyFilePath = path + args[0];
             if (!proxyFilePath.endsWith(".json")) {
                 proxyFilePath = proxyFilePath + ".json";

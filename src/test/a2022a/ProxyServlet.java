@@ -4,12 +4,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 
 public class ProxyServlet extends HttpServlet {
 
@@ -57,67 +57,160 @@ public class ProxyServlet extends HttpServlet {
     private void proxyRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String requestMethod = req.getMethod();
-        String targetUrl = targetPath + req.getRequestURI();
+        String targetUrl = createTargetUrl(req);
 
         URL url = new URL(targetUrl);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod(requestMethod);
 
         // 원본 요청 헤더를 프록시 요청에 복사
-        /*req.getHeaderNames().asIterator().forEachRemaining(headerName -> {
-            String headerValue = req.getHeader(headerName);
-            con.setRequestProperty(headerName, headerValue);
-        });*/
-        Enumeration<String> headerNames = req.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            String headerValue = req.getHeader(headerName);
-            con.setRequestProperty(headerName, headerValue);
-        }
+        copyRequestHeaders(req, con);
+
+        // 원본 요청 파라미터를 프록시 요청에 복사
+        copyRequestParameters(req, con);
 
         // 원본 요청 바디를 프록시 요청에 복사
         copyRequestBody(req, con);
 
+        // 프록시 요청을 보내고 응답을 받습니다.
         int responseCode = con.getResponseCode();
 
         // 프록시 응답 헤더를 원본 응답에 복사
-        for (String headerName : con.getHeaderFields().keySet()) {
-            if (headerName != null) {
-                String headerValue = con.getHeaderField(headerName);
-                resp.setHeader(headerName, headerValue);
-            }
-        }
+        copyResponseHeaders(con, resp);
 
-        resp.setStatus(responseCode);
+        // 프록시 응답 파라미터를 원본 응답에 복사
+        copyResponseParameters(con, resp);
 
         // 프록시 응답 바디를 원본 응답에 복사
         copyResponseBody(con, resp);
 
+        // 프록시 응답 코드를 원본 응답에 복사
+        resp.setStatus(responseCode);
+
+        // 프록시 응답을 보냈으면 연결을 닫습니다.
         con.disconnect();
     }
 
+    private String createTargetUrl(HttpServletRequest req) {
+        String targetUrl = targetPath + req.getRequestURI();
+        String queryString = req.getQueryString();
+        if (queryString != null) {
+            targetUrl += "?" + queryString;
+        }
+        return targetUrl;
+    }
+
+    private void copyRequestHeaders(HttpServletRequest req, HttpURLConnection con) throws IOException {
+//        req.getHeaderNames().asIterator().forEachRemaining(headerName -> {
+//            String headerValue = req.getHeader(headerName);
+//            con.setRequestProperty(headerName, headerValue);
+//        });
+        Enumeration<String> headerNames = req.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = req.getHeader(headerName);
+            con.addRequestProperty(headerName, headerValue);
+        }
+    }
+
+    private void copyRequestParameters(HttpServletRequest req, HttpURLConnection con) throws IOException {
+//        req.getParameterMap().forEach((paramName, paramValues) -> {
+//            for (String paramValue : paramValues) {
+//                con.addRequestProperty(paramName, paramValue);
+//            }
+//        });
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+            String paramName = entry.getKey();
+            String[] paramValues = entry.getValue();
+            for (String paramValue : paramValues) {
+                con.addRequestProperty(paramName, paramValue);
+            }
+        }
+    }
+
     private void copyRequestBody(HttpServletRequest req, HttpURLConnection con) throws IOException {
-        if (req.getContentLength() > 0) {
+        int contentLength = req.getContentLength();
+        if (contentLength > 0) {
             con.setDoOutput(true);
-            try (OutputStream outputStream = con.getOutputStream()) {
+            try (OutputStream outputStream = con.getOutputStream();
+                 InputStream inputStream = req.getInputStream()) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
-                while ((bytesRead = req.getInputStream().read(buffer)) != -1) {
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, bytesRead);
                 }
             }
         }
     }
 
+    private void copyResponseHeaders(HttpURLConnection con, HttpServletResponse resp) throws IOException {
+//        con.getHeaderFields().forEach((headerName, headerValues) -> {
+//            if (headerName != null) {
+//                for (String headerValue : headerValues) {
+//                    resp.addHeader(headerName, headerValue);
+//                }
+//            }
+//        });
+        Map<String, List<String>> headerFields = con.getHeaderFields();
+        for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+            String headerName = entry.getKey();
+            if (headerName != null) {
+                List<String> headerValues = entry.getValue();
+                for (String headerValue : headerValues) {
+                    resp.addHeader(headerName, headerValue);
+                }
+            }
+        }
+    }
+
+    private void copyResponseParameters(HttpURLConnection con, HttpServletResponse resp) throws IOException {
+//        con.getHeaderFields().forEach((headerName, headerValues) -> {
+//            if (headerName != null) {
+//                for (String headerValue : headerValues) {
+//                    resp.addHeader(headerName, headerValue);
+//                }
+//            }
+//        });
+        Map<String, List<String>> headerFields = con.getHeaderFields();
+        for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+            String headerName = entry.getKey();
+            if (headerName != null) {
+                List<String> headerValues = entry.getValue();
+                for (String headerValue : headerValues) {
+                    resp.addHeader(headerName, headerValue);
+                }
+            }
+        }
+    }
+
     private void copyResponseBody(HttpURLConnection con, HttpServletResponse resp) throws IOException {
-        try (InputStream inputStream = con.getInputStream();
-             OutputStream outputStream = resp.getOutputStream()) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new BufferedInputStream(con.getInputStream());
+            outputStream = new BufferedOutputStream(resp.getOutputStream());
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, bytesRead);
             }
+        } finally {
+            if (outputStream != null) {
+                outputStream.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
         }
-    }
 
+//        try (InputStream inputStream = con.getInputStream();
+//             OutputStream outputStream = resp.getOutputStream()) {
+//            byte[] buffer = new byte[4096];
+//            int bytesRead;
+//            while ((bytesRead = inputStream.read(buffer)) != -1) {
+//                outputStream.write(buffer, 0, bytesRead);
+//            }
+//        }
+    }
 }

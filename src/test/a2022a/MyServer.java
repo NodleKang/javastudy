@@ -4,6 +4,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
@@ -49,6 +50,7 @@ public class MyServer extends Thread {
         connector.setPort(port);
         server.setConnectors(new ServerConnector[] { connector });
 
+        /*
         // 루트 컨텍스트 경로를 "/"로 설정
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
@@ -64,6 +66,25 @@ public class MyServer extends Thread {
         // 핸들러 설정
         HandlerCollection handlers = new HandlerCollection();
         handlers.addHandler(context);
+        server.setHandler(handlers);
+        */
+
+        // 루트 컨텍스트 경로를 "/"로 설정
+        ServletHandler handler = new ServletHandler();
+        handler.addServletWithMapping(ProxyServlet.class, "/*");
+
+        // 컨텍스트 경로 설정
+        for (String pathPrefix : proxyMap.keySet()) {
+            ProxyServlet proxyServlet = new ProxyServlet();
+            proxyServlet.setTargetPath(proxyMap.get(pathPrefix));
+            handler.addServletWithMapping(new ServletHolder(proxyServlet), pathPrefix+"/*");
+            //ServletHolder servletHolder = handler.addServletWithMapping(proxyServlet, pathPrefix + "/*");
+            //servletHolder.setInitParameter("targetPath", proxyMap.get(pathPrefix));
+        }
+
+        // 핸들러 설정
+        HandlerCollection handlers = new HandlerCollection();
+        handlers.addHandler(handler);
         server.setHandler(handlers);
 
         try {
