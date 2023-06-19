@@ -28,6 +28,15 @@ public class ProxyServlet extends HttpServlet {
     }
 
     @Override
+    public void destroy() {
+        // 서블릿이 종료될 때 필요한 작업이 있으면 여기에 추가합니다.
+        // 이 메소드는 서블릿이 종료될 때 한 번 실행됩니다.
+        // 서블릿이 실행되는 동안 필요한 작업이 없으면 이 메소드를 비워둡니다.
+        System.out.println("ProxyServlet destroy");
+        super.destroy();
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         proxyRequest(req, resp);
     }
@@ -56,11 +65,15 @@ public class ProxyServlet extends HttpServlet {
 
     private void proxyRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String requestMethod = req.getMethod();
-        String targetUrl = createTargetUrl(req);
+        Map<String, List<String>> headers = getHeaders(req, "x-");
 
+        // 원본 요청을 전달할 대상 URL 설정
+        String targetUrl = createTargetUrl(req);
         URL url = new URL(targetUrl);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+        // 원본 http Method 복사
+        String requestMethod = req.getMethod();
         con.setRequestMethod(requestMethod);
 
         // 원본 요청 헤더를 프록시 요청에 복사
@@ -89,6 +102,37 @@ public class ProxyServlet extends HttpServlet {
 
         // 프록시 응답을 보냈으면 연결을 닫습니다.
         con.disconnect();
+    }
+
+    // 원본 요청에서 prefix로 시작하는 모든 헤더의 이름과 값을 반환합니다.
+    private Map<String, List<String>> getHeaders(HttpServletRequest req, String namePrefix) {
+        Map<String, List<String>> headers = new HashMap<>();
+        // 요청에서 모든 헤더의 이름을 가져와서 순회합니다.
+        Enumeration<String> headerNames = req.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            // 헤더의 이름이 prefix로 시작하는 경우에만 처리 진행
+            if (headerName.toLowerCase().startsWith(namePrefix)) {
+                // 같은 이름의 헤더가 여러 개일 수 있으므로 리스트에 값을 담습니다.
+                List<String> headerValues = new ArrayList<>();
+                Enumeration<String> headerValuesEnum = req.getHeaders(headerName);
+                while (headerValuesEnum.hasMoreElements()) {
+                    headerValues.add(headerValuesEnum.nextElement());
+                }
+                headers.put(headerName, headerValues);
+            }
+        }
+        return headers;
+    }
+
+    // 원본 요청에서 이름이 headerName과 같은 헤더의 이름과 값을 반환합니다.
+    private String getHeaderValue(HttpServletRequest req, String headerName) {
+        String headerValue = req.getHeader(headerName);
+        if (headerValue != null && !headerValue.isEmpty()) {
+            String[] values = headerValue.split(",");
+            return values[0].trim();
+        }
+        return null;
     }
 
     // 대상 경로와 요청 URI를 결합하여 대상 URL을 생성합니다.

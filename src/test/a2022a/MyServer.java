@@ -60,7 +60,7 @@ public class MyServer extends Thread {
         for (String pathPrefix : proxyMap.keySet()) {
             ProxyServlet proxyServlet = new ProxyServlet();
             proxyServlet.setTargetPath(proxyMap.get(pathPrefix));
-            context.addServlet(new ServletHolder(proxyServlet), pathPrefix+"/*");
+            context.addServlet(new ServletHolder(proxyServlet), pathPrefix+"/*"); //주의 : + "/*" 를 안해주면 sub path 에서는 동작하지 않음
         }
 
         // 핸들러 설정
@@ -78,7 +78,7 @@ public class MyServer extends Thread {
             ProxyServlet proxyServlet = new ProxyServlet();
             proxyServlet.setTargetPath(proxyMap.get(pathPrefix));
             handler.addServletWithMapping(new ServletHolder(proxyServlet), pathPrefix+"/*");
-            //ServletHolder servletHolder = handler.addServletWithMapping(proxyServlet, pathPrefix + "/*");
+            //ServletHolder servletHolder = handler.addServletWithMapping(proxyServlet, pathPrefix + "/*"); //주의 : + "/*" 를 안해주면 sub path 에서는 동작하지 않음
             //servletHolder.setInitParameter("targetPath", proxyMap.get(pathPrefix));
         }
 
@@ -95,7 +95,24 @@ public class MyServer extends Thread {
         }
     }
 
+
     // 서버를 중지합니다.
+    @Override
+    public void interrupt() {
+        try {
+            if (server != null) {
+                server.stop();
+                server.destroy();
+                System.out.println("HttpServer stopped.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            super.interrupt();
+        }
+    }
+
+    // 서버를 중지하고 인스턴스를 null로 설정합니다.
     public void stopServer() {
         try {
             if (instance != null) {
@@ -107,4 +124,5 @@ public class MyServer extends Thread {
             e.printStackTrace();
         }
     }
+
 }
