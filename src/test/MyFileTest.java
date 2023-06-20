@@ -12,11 +12,11 @@ public class MyFileTest {
 
         // 파일 내용을 모두 읽어서 단일 String 객체로 반환
         // 파일을 못 찾으면 빈 문자열 반환
-        String content = MyFile.readFileContent("./FILES/TEST.TXT");
+        String content = MyFile.readFileToString("./FILES/TEST.TXT");
 
         // 파일 내용을 모두 읽어서 String 배열로 반환
         // 파일을 못 찾으면 빈 배열 반환
-        String lines[] = MyFile.readFileContentToArray("./javastudy.iml");
+        String lines[] = MyFile.readFileToArray("./javastudy.iml", "UTF-8");
 
         // 디렉토리가 존재하는지 확인
         boolean checkDirectoryExists = MyFile.checkDirectoryExists("./FILES");
