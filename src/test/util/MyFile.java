@@ -93,6 +93,25 @@ public class MyFile {
         }
     }
 
+    // 새로운 경로로 파일 이동
+    public static void moveFile(String filename, String beforeFilePath, String afterFilePath) {
+
+        String filePath = afterFilePath+"/"+filename;
+
+        File dir = new File(afterFilePath);
+
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        try {
+            File file = new File(beforeFilePath);
+            file.renameTo(new File(afterFilePath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // 특정 경로에서 시작 키워드와 종료 키워드에 맞는 파일의 절대 경로 목록을 찾아서 String 배열로 반환 (하위 디렉토리 포함 여부 선택 가능)
     public static String[] findFiles(String path, String startKeyword, String endKeyword, boolean includeSubdirectories) {
         // ArrayList 객체를 사용해서 파일 경로 저장
@@ -137,7 +156,7 @@ public class MyFile {
     }
 
     // 파일 내용을 읽어서 String 객체로 반환
-    public static String readFileContent(File file) throws IOException {
+    public static String readFileToString(File file) throws IOException {
         // StringBuilder 객체를 사용해서 파일 내용 저장
         StringBuilder contentBuilder = new StringBuilder();
         // 파일이 존재하고 파일인 경우에만 파일 내용 읽기
@@ -159,14 +178,14 @@ public class MyFile {
     }
 
     // 파일 내용을 모두 읽어서 단일 String 객체로 반환
-    public static String readFileContent(String fileFullPath) {
+    public static String readFileToString(String fileFullPath) {
         String content = "";
         // 파일 객체 생성
         File file = new File(fileFullPath);
 
         try {
             // 파일 내용을 모두 읽어서 String 객체로 반환
-            content = readFileContent(file);
+            content = readFileToString(file);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -175,7 +194,7 @@ public class MyFile {
     }
 
     // 파일 내용을 모두 읽어서 String 배열로 반환
-    public static String[] readFileContentToArray(String fileFullPath) {
+    public static String[] readFileToArray(String fileFullPath) {
         // ArrayList 객체를 사용해서 파일 내용 저장
         List<String> lines = new ArrayList<>();
         // 파일 객체 생성
@@ -209,7 +228,7 @@ public class MyFile {
         String existingContent = "";
         if (position.equals("prepend")) {
             try {
-                existingContent = readFileContent(new File(path));
+                existingContent = readFileToString(new File(path));
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -234,6 +253,47 @@ public class MyFile {
             System.out.println("파일에 문자열을 입력하는 도중 오류가 발생했습니다: " + e.getMessage());
             return false;
         }
+    }
+
+    // 직렬화된 객체를 파일에 저장하기
+    // 직렬화된 객체 = 내용을 바이트 단위로 변환하여 파일이나 네트워크를 통해 송수신 가능하게 한 것
+    public static void saveSerializeObjectToFile(Object o, String fileFullPath) {
+
+        try {
+            // FileOutputStream 생성
+            FileOutputStream fileOutputStream = new FileOutputStream(fileFullPath);
+            // ObjectOutputStream 생성
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            // 객체를 직렬화(바이트 단위로 변환)해서 파일에 쓰기
+            objectOutputStream.write((byte[]) o);
+            // ObjectOutputStream 닫기
+            objectOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 파일에서 객체를 역직렬화해서 가져오기
+    public static Object deserializeObjectFromFile(String fileFullPath) {
+
+        try {
+            // FileInputStream 생성
+            FileInputStream fileInputStream = new FileInputStream(fileFullPath);
+            // ObjectInputStream 생성
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            // 객체를 역직렬화해서 가져오기
+            Object one = objectInputStream.readObject();
+            Object two = objectInputStream.readObject();
+            // objectInputStream 닫기
+            objectInputStream.close();
+
+            return one;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
     }
 
 }
