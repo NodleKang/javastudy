@@ -2,6 +2,8 @@ package test.util;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -33,6 +35,12 @@ public class MyDate {
         LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString, formatter);
 
         return localDateTime;
+    }
+
+    // LocalDateTime을 ZonedDateTime으로 변환
+    public static ZonedDateTime convertLocalDateTimeToZonedDateTime(LocalDateTime localDateTime) {
+        ZoneId zoneId = ZoneId.systemDefault();
+        return ZonedDateTime.of(localDateTime, zoneId);
     }
 
     // 시각의 요일을 문자열로 반환
