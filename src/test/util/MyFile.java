@@ -320,6 +320,34 @@ public class MyFile {
         }
     }
 
+    // 파일에서 문자열을 다른 문자열로 바꾸기
+    public static void replaceStringInFile(String fileFullPath, String oldString, String newString) {
+        try {
+            File file = new File(fileFullPath);
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(file), "UTF-8")
+            );
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            while ( (line = reader.readLine()) != null ) {
+                line = line.replaceAll(oldString, newString);
+                stringBuilder.append(line).append("\n");
+            }
+
+            reader.close();
+
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(file), "UTF-8")
+            );
+            writer.write(stringBuilder.toString());
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     // 직렬화된 객체를 파일에 저장하기
     // 직렬화된 객체 = 내용을 바이트 단위로 변환하여 파일이나 네트워크를 통해 송수신 가능하게 한 것
     public static void saveSerializeObjectToFile(Object o, String fileFullPath) {
