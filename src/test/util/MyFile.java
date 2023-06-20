@@ -1,8 +1,10 @@
 package test.util;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class MyFile {
 
@@ -216,6 +218,36 @@ public class MyFile {
         }
         // ArrayList 객체를 String 배열로 변환해서 반환
         return lines.toArray(new String[0]);
+    }
+
+    // 파일의 특정 라인 읽기
+    // 3번째 라인이 필요하면 lineNo에 3을 입력
+    public static String readNthLine(String fileFullPath, int lineNo) {
+        String line = "";
+        try (Stream<String> lines = Files.lines(Paths.get(fileFullPath))) {
+            line = lines.skip(lineNo-1).findFirst().get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return line;
+    }
+
+    // 파일의 라인 수 구하기
+    public static long getCountOfLines(String fileFullPath) {
+        long lines = 0;
+        try {
+            lines = Files.lines(Paths.get(fileFullPath)).count();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lines;
+    }
+
+    // 파일이 마지막으로 수정된 날짜 구하기
+    public static Date getLastModified(String fileFullPath) {
+        File file = new File(fileFullPath);
+        // file.lastModified() 메소드는 long 타입의 값을 반환
+        return new Date(file.lastModified());
     }
 
     // 파일에 문자열 입력

@@ -46,9 +46,9 @@ public class MyFileWatcher implements Runnable {
                              new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)
                      )
         ) {
-            while (isRun) {
+            while (isRun) { // 무한반복
                 final String line = br.readLine(); // 파일에서 한 라인 읽어오기
-                if (line != null) {
+                if (line != null) { // 파일에서 읽어온 라인이 null이 아니면 출력
                     System.out.println("New line added - " + line);
                 } else {
                     Thread.sleep(DELAY_MILLIS);
