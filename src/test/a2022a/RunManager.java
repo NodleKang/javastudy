@@ -24,7 +24,7 @@ public class RunManager {
             if (!proxyFilePath.endsWith(".json")) {
                 proxyFilePath = proxyFilePath + ".json";
             }
-            String content = MyFile.readFileContent(proxyFilePath);
+            String content = MyFile.readFileToString(proxyFilePath);
             JsonObject jsonRouteRule = MyJson.convertStringToJsonObject(content);
             testOnHttp(jsonRouteRule);
         }
@@ -44,25 +44,25 @@ public class RunManager {
             String[] commands = MyString.splitToStringArray(line, " ");
             String path = "C:/sp_workspace/javastudy/src/test/a2022a/";
             String proxyFileName = commands[0] + ".txt";
-            String[] routeRules = MyFile.readFileContentToArray(path + proxyFileName);
+            String[] routeRules = MyFile.readFileToArray(path + proxyFileName, "UTF-8");
             for (String routeRule: routeRules) {
                 String[] routeArr = MyString.splitToStringArray(routeRule, "#", true);
                 if (routeArr[0].equals(commands[1])) {
                     if (routeArr[1].startsWith("Proxy")) {
-                        String[] routeRules2 = MyFile.readFileContentToArray(path + routeArr[1]);
+                        String[] routeRules2 = MyFile.readFileToArray(path + routeArr[1], "UTF-8");
                         for (String routeRule2 : routeRules2) {
                             String[] routeArr2 = MyString.splitToStringArray(routeRule2, "#", true);
                             if (routeArr2[0].equals(commands[1])) {
                                 String targetPath = path + routeArr2[1];
                                 System.out.println(targetPath);
-                                String content = MyFile.readFileContent(targetPath);
+                                String content = MyFile.readFileToString(targetPath);
                                 System.out.println(content);
                             }
                         }
                     } else {
                         String targetPath = path + proxyFileName.trim();
                         System.out.println(targetPath);
-                        String content = MyFile.readFileContent(targetPath);
+                        String content = MyFile.readFileToString(targetPath);
                         System.out.println(content);
                     }
                 }
