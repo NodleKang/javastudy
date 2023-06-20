@@ -220,6 +220,39 @@ public class MyFile {
         return lines.toArray(new String[0]);
     }
 
+    // 파일 내용중에 특정 키워드가 포함된 첫 번째 줄의 줄 번호 반환
+    public static int getLineNo(String fileFullPath, String keyword) {
+        int[] lineNo = {0};
+        try {
+            Optional<String> matchingLine = Files.lines(Paths.get(fileFullPath)) // 스트림 생성
+                    .peek(line -> lineNo[0]++) // 라인을 순회하면서 peek() 메소드를 사용해서 라인 번호 증가
+                    .filter(line -> line.contains(keyword)) // 특정 키워드가 포함된 라인 필터링
+                    .findFirst(); // 필터링된 라인 중에서 첫 번째 라인 반환
+
+            if (matchingLine.isPresent()) {
+                return lineNo[0]; // 특정 키워드가 포함된 첫 번째 라인의 줄 번호 반환
+            } else {
+                return -1; // 특정 키워드가 포함된 라인이 없는 경우 -1 반환
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lineNo[0];
+    }
+
+    // 파일 내용중에 특정 키워드가 포함된 모든 라인 반환
+    public static String[] getLinesWithKeyword(String fileFullPath, String keyword) {
+        List<String> linesWithKeyword = new ArrayList<>();
+        try {
+            Files.lines(Paths.get(fileFullPath)) // 스트림 생성
+                    .filter(line -> line.contains(keyword)) // 특정 키워드가 포함된 라인 필터링
+                    .forEach(linesWithKeyword::add); // 필터링된 라인을 ArrayList 객체에 저장
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return linesWithKeyword.toArray(new String[0]); // ArrayList 객체를 String 배열로 변환해서 반환
+    }
+
     // 파일의 특정 라인 읽기
     // 3번째 라인이 필요하면 lineNo에 3을 입력
     public static String readNthLine(String fileFullPath, int lineNo) {
