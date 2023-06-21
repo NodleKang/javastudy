@@ -1,3 +1,28 @@
 Pub/Sub 관련 유용한 저장소
 
 https://github.com/mathieucarbou/pubsub
+
+https://github.com/linkyndy/messaging-server (9년된 프로젝트)
+메시지 queue 및 topic을 지원하는 간단한 Java 기반 메시징 서버
+topic: 누구나 구독 가능
+message: 선택한 수신자만 메시지 수신 가능
+
+https://github.com/tutikka/simple-java-queue (7년된 프로젝트)
+pub/sub 모델을 기반으로 하는 java용 단순 메시징 시스템
+효율적 통신을 위한 브로드캐스팅 데이터그램 패킷 기반을 구현되어 있음
+
+https://github.com/shiuu/queue-service (2년된 프로젝트)
+기본 기능을 갖춘 메시지 큐 구현
+QueueService: 필수 대기얼 작업 제공 인터페이스
+InMemoryQueueService: 메모리 기반의 QueueService 구현
+FileQueueService: 파일 기반의 QueueService 구현
+
+https://github.com/abhinavp105/InMemoryQueue (6년된 프로젝트)
+JSON 지원
+특정 표현식과 일치하는 메시지에 대한 구독 허용
+consumer는 새 메시지가 있을 때마다 호출되는 콜백 등록
+대기열에는 하나의 producer와 여러 consumer 있음
+consumer 사이에 종속관계 지원
+대기열 크기 제한
+producer와 consumer 간에 일관되게 동시 쓰기 및 읽기 처리
+메시지 처리 실패를 처리하기 위한 재시도 매커니즘
